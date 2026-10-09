@@ -1,13 +1,24 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "edge-ops",
+  "name": "cloudflare-ops",
   "main": "src/index.ts",
   "compatibility_date": "2026-09-01",
   "compatibility_flags": ["nodejs_compat"],
   "observability": { "enabled": true },
+
+  "durable_objects": {
+    "bindings": [{ "name": "MonitorAgent", "class_name": "MonitorAgent" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["MonitorAgent"] }],
+
   "vars": {
-    "ENVIRONMENT": "production"
+    "ENVIRONMENT": "production",
+    "CHECK_INTERVAL_SECONDS": "60",
+    "FAILURE_THRESHOLD": "2",
+    // 최초 기동 시 한 번만 등록된다. 이후에는 POST /api/targets 로 관리.
+    "MONITOR_TARGETS": "[]"
   }
+
   // 커스텀 도메인에 연결하려면 아래 주석을 풀고 도메인을 바꾸세요.
   // "routes": [{ "pattern": "ops.example.com", "custom_domain": true }]
 }
